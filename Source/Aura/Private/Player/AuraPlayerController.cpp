@@ -4,11 +4,19 @@
 #include "Player/AuraPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Interaction/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
 
+}
+
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	CursorTrace();
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -52,5 +60,41 @@ void AAuraPlayerController::Move(const FInputActionValue& Value)
 	{
 		ControlledPawn->AddMovementInput(ForwardVector, NormalizedInputAxisVector.Y);
 		ControlledPawn->AddMovementInput(RightVector, NormalizedInputAxisVector.X);
+	}
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHit;
+	if (GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, CursorHit))
+	{
+		LastActor = CurrentActor;
+		CurrentActor = Cast<IEnemyInterface>(CursorHit.GetActor());
+
+		if (LastActor == nullptr) 
+		{
+			if (CurrentActor != nullptr)
+			{
+				// LastActor is null and CurrentActor is valid -> Highlight CurrentActor
+				CurrentActor->HighlightActor();
+			}
+		}
+		else // LastActor is valid
+		{
+			if (CurrentActor == nullptr)
+			{
+				// LastActor is valid and CurrentActor is null -> Unhighlight LastActor
+				LastActor->UnhighlightActor();
+			}
+			else // Both actors are valid
+			{
+				if (LastActor != CurrentActor)
+				{
+					// Both actor are valid, but LastActor != CurrentActor -> Unhighlight LastActor and highlight CurrentActor
+					LastActor->UnhighlightActor();
+					CurrentActor->HighlightActor();
+				}
+			}
+		}
 	}
 }
