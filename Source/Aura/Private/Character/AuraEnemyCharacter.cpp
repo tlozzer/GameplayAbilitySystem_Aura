@@ -6,14 +6,18 @@
 AAuraEnemyCharacter::AAuraEnemyCharacter()
 {
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+	GetMesh()->SetCustomDepthStencilValue(250);
+	GetWeapon()->SetCustomDepthStencilValue(250);
 }
 
 void AAuraEnemyCharacter::HighlightActor()
 {
-	DrawDebugSphere(GetWorld(), GetActorLocation(), 50.f, 16, FColor::Red, false, 2.f);
+	GetMesh()->SetRenderCustomDepth(true);
+	GetWeapon()->SetRenderCustomDepth(true);
 }
 
 void AAuraEnemyCharacter::UnhighlightActor()
 {
-	DrawDebugSphere(GetWorld(), GetActorLocation(), 50.f, 16, FColor::Blue, false, 2.f);
+	GetMesh()->SetRenderCustomDepth(false);
+	GetWeapon()->SetRenderCustomDepth(false);
 }
