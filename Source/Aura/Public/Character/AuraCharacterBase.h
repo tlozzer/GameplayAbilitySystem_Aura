@@ -20,5 +20,5 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	FORCEINLINE TObjectPtr<USkeletalMeshComponent> GetWeapon() { return Weapon; }
+	FORCEINLINE TObjectPtr<USkeletalMeshComponent> GetWeapon() const { return Weapon; }
 };
